@@ -16,23 +16,31 @@ if [ ${userselect,,} = "y" ] ; then
 # Copy kbn_network folder to /nsm/kibana/plugins
     tar -xvf network_vis.tar -C /nsm/kibana/plugins
     chown -R root:root /nsm/kibana/plugins/*
+sleep 2
+    echo ""
+    echo ""
+    echo ""
     echo "Need to mount a new volume to the Kibana docker container.  This is done by utilizing the KIBANA_OPTIONS in the /etc/nsm/securityonion.conf file."
         currentkibanaoptions="$(sudo cat /etc/nsm/securityonion.conf | grep KIBANA_OPTIONS)"
-    echo "Here are your current KIBANA_OPTIONS:   $currentlogkibanaoptions"
+    echo " Below are your current KIBANA_OPTIONS: " 
+    echo " $currentkibanaoptions"
+    echo ""
+sleep 2
     echo "If you already have Kibana options configured  press 1, if not press any key to continue"
         read kibanachoice
 	if [ $kibanachoice = "1" ] ; then
             echo "Add the following to your existing options to mount a new volume: --volume /nsm/kibana/plugins:/usr/share/kibana/plugins:ro"
-            echo "Enter All logstash options as they should appear in the securityonion.conf file"
-            read logstashoptions
+            echo "Enter All Kibana options as they should appear in the securityonion.conf file"
+            read kibanaoptions
                 echo "Adding Kibana Options now"
             sudo sed -i 's|KIBANA_OPTIONS.*|'"$kibanaoptions"'|g' /etc/nsm/securityonion.conf
         else
             echo "Adding Kibana Options now"
-            sudo sed -i 's|KIBANA_OPTIONS=""|KIBANA_OPTIONS="--volume /etc/logstash/Data:/:ro"|g' /etc/nsm/securityonion.conf
+            sudo sed -i 's|KIBANA_OPTIONS=""|KIBANA_OPTIONS="--volume /nsm/kibana/plugins:/usr/share/kibana/plugins:ro"|g' /etc/nsm/securityonion.conf
         # Allow logstash container access to /etc/logstash/Data directory
         fi
 	echo "Rebuilding Kibana Docker Container"
+	echo "Note: Third party plugins for Kibana can cause an increase in the time it takes for the  Kibana Docker container to initialize."
 	# Restart Kibana Docker
 	so-kibana-restart
 	echo "Complete"
