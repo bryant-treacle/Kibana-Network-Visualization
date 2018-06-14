@@ -14,7 +14,7 @@ if [ ${userselect,,} = "y" ] ; then
 # Make a directory for kbn_network plugin
     mkdir -p /nsm/kibana/plugins
 # Copy kbn_network folder to /nsm/kibana/plugins
-    tar -xvf software/network_vis.tar -C /nsm/kibana/plugins
+    tar -xvf network_vis.tar -C /nsm/kibana/plugins
     chown -R root:root /nsm/kibana/plugins/*
     echo "Need to mount a new volume to the Kibana docker container.  This is done by utilizing the KIBANA_OPTIONS in the /etc/nsm/securityonion.conf file."
         currentkibanaoptions="$(sudo cat /etc/nsm/securityonion.conf | grep KIBANA_OPTIONS)"
